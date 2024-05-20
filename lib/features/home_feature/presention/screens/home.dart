@@ -7,21 +7,35 @@ import 'package:movie_app/features/home_feature/presention/cubits/watchlist_cubi
 import 'package:movie_app/features/home_feature/presention/screens/wash_list.dart';
 import 'package:movie_app/features/home_feature/presention/widgets/movie_item.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch now playing movies on initialization
+    context.read<NowPlayingMoviesCubit>().fetchNowPlayingMovies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Now Playing Movies'),
+        title: const Text('Now Playing Movies'),
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               // Implement search functionality
             },
           ),
           IconButton(
-            icon: Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list),
             onPressed: () {
               // Implement filter functionality
             },
@@ -31,43 +45,26 @@ class HomeScreen extends StatelessWidget {
       drawer: _buildDrawer(context),
       body: BlocBuilder<NowPlayingMoviesCubit, NowPlayingMoviesState>(
         builder: (context, state) {
-          if (state is NowPlayingMoviesLoading 
-          //&& state.movie.isEmpty
-          ) {
-            return Center(child: CircularProgressIndicator());
+          if (state is NowPlayingMoviesLoading) {
+            return const Center(child: CircularProgressIndicator());
           } else if (state is NowPlayingMoviesLoaded) {
-            return NotificationListener<ScrollNotification>(
-              onNotification: (scrollNotification) {
-                if (scrollNotification.metrics.pixels ==
-                    scrollNotification.metrics.maxScrollExtent &&
-                    !context.read<NowPlayingMoviesCubit>().state.isFetching) {
-                  context.read<NowPlayingMoviesCubit>().fetchNowPlayingMovies();
-                }
-                return true;
+            return ListView.builder(
+              itemCount: state.movies.length,
+              itemBuilder: (context, index) {
+                return MovieListItem(
+                  movie: state.movies[index],
+                  onAddToWatchlist: () {
+                    final watchlistCubit = context.read<WatchlistCubit>();
+                    watchlistCubit.addToWatchlist(
+                        state.movies[index].id.toString(), true);
+                  },
+                );
               },
-              child: ListView.builder(
-                itemCount: state.hasReachedEnd
-                    ? state.movies.length
-                    : state.movies.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == state.movies.length) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  return MovieListItem(
-                    movie: state.movies[index],
-                    onAddToWatchlist: () {
-                      final watchlistCubit = 
-                      context.read<WatchlistCubit>();
-                      watchlistCubit.addToWatchlist(state.movies[index].id.toString(), true);
-                    },
-                  );
-                },
-              ),
             );
           } else if (state is NowPlayingMoviesError) {
             return Center(child: Text(state.message));
           } else {
-            return Center(child: Text('Failed to load movies'));
+            return const Center(child: Text('Failed to load movies'));
           }
         },
       ),
@@ -76,7 +73,8 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildDrawer(BuildContext context) {
     final authCubit = context.read<AuthCubit>();
-    final user = authCubit.tmdbAuth.currentUser;
+    final user =
+     authCubit.tmdbAuth?.currentUser;
 
     return Drawer(
       child: ListView(
@@ -90,12 +88,11 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.list),
-            title: Text('Wishlist'),
+            leading: const Icon(Icons.list),
+            title: const Text('Wishlist'),
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => 
-                WishlistScreen()),
+                MaterialPageRoute(builder: (context) => WishlistScreen()),
               );
             },
           ),

@@ -5,14 +5,14 @@ import 'package:movie_app/features/Auth_features/presentation/cubit/auth_state.d
 
 
 class AuthCubit extends Cubit<AuthState>  {
-  final TMDBAuth tmdbAuth;
+  final TMDBAuth? tmdbAuth;
 
-  AuthCubit({required this.tmdbAuth}) : super(AuthInitial());
+  AuthCubit({ this.tmdbAuth}) : super(AuthInitial());
 
   Future<void> checkLoginStatus() async {
     try {
-      await tmdbAuth.checkLoginStatus();
-      if (tmdbAuth.sessionId != null) {
+      await tmdbAuth!.checkLoginStatus();
+      if (tmdbAuth?.sessionId != null) {
         emit(AuthAuthenticated());
       } else {
         emit(AuthUnauthenticated());
@@ -25,9 +25,9 @@ class AuthCubit extends Cubit<AuthState>  {
   Future<void> login(String username, String password) async {
     emit(AuthLoading());
     try {
-      await tmdbAuth.getRequestToken();
-      await tmdbAuth.validateWithLogin(username, password);
-      await tmdbAuth.createSession();
+      await tmdbAuth!.getRequestToken();
+      await tmdbAuth!.validateWithLogin(username, password);
+      await tmdbAuth!.createSession();
       emit(AuthAuthenticated());
     } catch (e) {
       emit(AuthError(e.toString()));
@@ -35,7 +35,7 @@ class AuthCubit extends Cubit<AuthState>  {
   }
 
   Future<void> logout() async {
-    await tmdbAuth.logout();
+    await tmdbAuth!.logout();
     emit(AuthUnauthenticated());
   }
 

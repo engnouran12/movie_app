@@ -5,15 +5,22 @@ import 'package:movie_app/features/Auth_features/data/models/user_model.dart';
 
 class TMDBAuth {
   final String apiKey;
-  String? requestToken;
-  String? sessionId;
-  User? currentUser;
+   String requestToken;
+  String sessionId;
+  User ?currentUser;
   final SharedPrefService sharedPrefService;
 
-  TMDBAuth({required this.apiKey, required this.sharedPrefService});
+  TMDBAuth({
+     required this.apiKey,
+     required this.currentUser,
+   required this.requestToken,
+  required this.sessionId,
+    required this.sharedPrefService}
+  );
 
   Future<void> getRequestToken() async {
-    final url = Uri.parse('https://api.themoviedb.org/3/authentication/token/new?api_key=$apiKey');
+    final url = Uri.parse(
+      'https://api.themoviedb.org/3/authentication/token/new?api_key=$apiKey');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -63,7 +70,7 @@ class TMDBAuth {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       sessionId = data['session_id'];
-      await sharedPrefService.saveSessionId(sessionId!);
+      await sharedPrefService!.saveSessionId(sessionId!);
       await _fetchUserDetails();
     } else {
       throw Exception('Failed to create session: ${response.body}');
@@ -71,29 +78,30 @@ class TMDBAuth {
   }
 
   Future<void> _fetchUserDetails() async {
-    final url = Uri.parse('https://api.themoviedb.org/3/account?api_key=$apiKey&session_id=$sessionId');
+    final url = Uri.parse(
+      'https://api.themoviedb.org/3/account?api_key=$apiKey&session_id=$sessionId');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       currentUser = User.fromJson(data);
-      await sharedPrefService.saveUser(currentUser!);
+      await sharedPrefService!.saveUser(currentUser!);
     } else {
       throw Exception('Failed to fetch user details: ${response.body}');
     }
   }
 
   Future<void> checkLoginStatus() async {
-    sessionId = await sharedPrefService.getSessionId();
+    sessionId = (await sharedPrefService.getSessionId())!;
     if (sessionId != null) {
-      currentUser = await sharedPrefService.getUser();
+      currentUser = (await sharedPrefService.getUser())!;
     }
   }
 
   Future<void> logout() async {
     await sharedPrefService.clearSessionId();
     await sharedPrefService.clearUser();
-    sessionId = null;
+    sessionId = '';
     currentUser = null;
   }
 }

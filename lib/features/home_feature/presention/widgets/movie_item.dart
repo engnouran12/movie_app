@@ -6,7 +6,8 @@ class MovieListItem extends StatelessWidget {
   final VoidCallback? onAddToWatchlist;
   final VoidCallback? onRemoveFromWatchlist;
 
-  MovieListItem({
+  const MovieListItem({
+    super.key,
     required this.movie,
     this.onAddToWatchlist,
     this.onRemoveFromWatchlist,
@@ -15,9 +16,9 @@ class MovieListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -27,35 +28,35 @@ class MovieListItem extends StatelessWidget {
               height: 150,
               fit: BoxFit.cover,
             ),
-            SizedBox(width: 16.0),
+            const SizedBox(width: 16.0),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     movie.title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   Text(
                     movie.overview,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   Text('Rating: ${movie.voteAverage}'),
                   if (onAddToWatchlist != null)
                     ElevatedButton(
                       onPressed: onAddToWatchlist,
-                      child: Text('Add to Watchlist'),
+                      child: const Text('Add to Watchlist'),
                     ),
                   if (onRemoveFromWatchlist != null)
                     ElevatedButton(
                       onPressed: onRemoveFromWatchlist,
-                      child: Text('Remove from Watchlist'),
+                      child: const Text('Remove from Watchlist'),
                     ),
                 ],
               ),

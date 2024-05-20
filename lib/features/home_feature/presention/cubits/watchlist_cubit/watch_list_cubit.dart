@@ -1,3 +1,5 @@
+// 
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_app/features/home_feature/data/datasource/watch_list_repo.dart';
 import 'package:movie_app/features/home_feature/presention/cubits/watchlist_cubit/watch_list_state.dart';
@@ -5,7 +7,7 @@ import 'package:movie_app/features/home_feature/presention/cubits/watchlist_cubi
 class WatchlistCubit extends Cubit<WatchlistState> {
   final WatchlistRepository watchlistRepository;
 
-  WatchlistCubit({required this.watchlistRepository, required String apiKey}) : super(WatchlistInitial());
+  WatchlistCubit({required this.watchlistRepository}) : super(WatchlistInitial());
 
   Future<void> fetchWatchlist() async {
     try {
@@ -20,11 +22,9 @@ class WatchlistCubit extends Cubit<WatchlistState> {
   Future<void> addToWatchlist(String movieId, bool add) async {
     try {
       await watchlistRepository.addToWatchlist(movieId, add);
-      fetchWatchlist();  // Refresh the watchlist after adding/removing a movie
+      fetchWatchlist(); // Refresh the watchlist after adding/removing a movie
     } catch (e) {
       emit(WatchlistError(message: e.toString()));
     }
   }
 }
-
-

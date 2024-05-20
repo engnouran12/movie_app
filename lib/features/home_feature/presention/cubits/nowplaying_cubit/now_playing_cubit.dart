@@ -5,7 +5,7 @@ import 'package:movie_app/features/home_feature/data/datasource/remote_movie_now
 import 'package:movie_app/features/home_feature/presention/cubits/nowplaying_cubit/now_playing_state.dart';
 
 class NowPlayingMoviesCubit extends Cubit<NowPlayingMoviesState> {
-  final MovieRepository movieRepository;
+   MovieRepository movieRepository;
 
   int currentPage = 1;
   List<Movie> movies = [];
