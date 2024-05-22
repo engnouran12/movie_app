@@ -1,26 +1,29 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:movie_app/core/const.dart';
 import 'package:movie_app/features/Auth_features/data/datasource/local_data_source.dart';
 import 'package:movie_app/features/Auth_features/data/models/user_model.dart';
 
 class TMDBAuth {
   final String apiKey;
-   String requestToken;
-  String sessionId;
+   String ?requestToken;
+  String ?sessionId;
   User ?currentUser;
   final SharedPrefService sharedPrefService;
 
   TMDBAuth({
      required this.apiKey,
      required this.currentUser,
-   required this.requestToken,
+    this.requestToken,
   required this.sessionId,
     required this.sharedPrefService}
   );
 
+ //sign up
   Future<void> getRequestToken() async {
     final url = Uri.parse(
-      'https://api.themoviedb.org/3/authentication/token/new?api_key=$apiKey');
+      '$baseUrl/authentication/token/new?api_key=$apiKey'
+      );
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -36,7 +39,8 @@ class TMDBAuth {
       throw Exception('Request token not found. Call getRequestToken first.');
     }
 
-    final url = Uri.parse('https://api.themoviedb.org/3/authentication/token/validate_with_login?api_key=$apiKey');
+    final url = Uri.parse(
+      '$baseUrl/authentication/token/validate_with_login?api_key=$apiKey');
     final response = await http.post(
       url,
       body: json.encode({
@@ -60,7 +64,8 @@ class TMDBAuth {
       throw Exception('Request token not found. Call validateWithLogin first.');
     }
 
-    final url = Uri.parse('https://api.themoviedb.org/3/authentication/session/new?api_key=$apiKey');
+    final url = Uri.parse(
+      '$baseUrl/authentication/session/new?api_key=$apiKey');
     final response = await http.post(
       url,
       body: json.encode({'request_token': requestToken}),
@@ -70,7 +75,7 @@ class TMDBAuth {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       sessionId = data['session_id'];
-      await sharedPrefService!.saveSessionId(sessionId!);
+      await sharedPrefService.saveSessionId(sessionId!);
       await _fetchUserDetails();
     } else {
       throw Exception('Failed to create session: ${response.body}');
@@ -79,13 +84,13 @@ class TMDBAuth {
 
   Future<void> _fetchUserDetails() async {
     final url = Uri.parse(
-      'https://api.themoviedb.org/3/account?api_key=$apiKey&session_id=$sessionId');
+      '$base64Url/account?api_key=$apiKey&session_id=$sessionId');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       currentUser = User.fromJson(data);
-      await sharedPrefService!.saveUser(currentUser!);
+      await sharedPrefService.saveUser(currentUser!);
     } else {
       throw Exception('Failed to fetch user details: ${response.body}');
     }

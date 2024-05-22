@@ -11,11 +11,24 @@ import 'package:movie_app/features/home_feature/data/datasource/watch_list_repo.
 import 'package:movie_app/features/home_feature/presention/cubits/nowplaying_cubit/now_playing_cubit.dart';
 import 'package:movie_app/features/home_feature/presention/cubits/watchlist_cubit/watch_list_cubit.dart';
 import 'package:movie_app/features/home_feature/presention/screens/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
+ // final sharedPreferences = await SharedPreferences.getInstance();
+    // final sharedPrefService =
+    //  SharedPrefService
+    //  (sharedpref: sharedPreferences
+    //   );
+
+  
+  //final sharedPrefService = SharedPrefService().saveSessionId(sessionId);
+ 
+  await MovieRepository(apiKey: apiKey).getNowPlayingMovies(1);
   //final sharedPrefService = SharedPrefService();
   // final tmdbAuth = TMDBAuth(
-  //     apiKey: apiKey, sharedPrefService: sharedPrefService, sessionId: '');
+  //     apiKey: apiKey, sharedPrefService:
+  // sharedPrefService,
+  // sessionId: '');
   // final watchlistRepository =
   //     WatchlistRepository(apiKey: apiKey, sharedPrefService: sharedPrefService);
   // final movieRepository = MovieRepository(apiKey: 'YOUR_API_KEY');
@@ -34,13 +47,25 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  AuthCubit authCubit = AuthCubit();
+  TMDBAuth tmdbAuth = TMDBAuth(
+       apiKey: apiKey,
+        
+   sessionId: '', sharedPrefService: SharedPrefService(),
+    currentUser: null);
+  AuthCubit authCubit = AuthCubit(tmdbAuth: TMDBAuth(
+       apiKey: apiKey,
+        
+   sessionId: '', sharedPrefService: SharedPrefService(), currentUser: null));
   //TMDBAuth(apiKey: apiKey, sharedPrefService: sharedPrefService, sessionId: '');;
-  NowPlayingMoviesCubit nowPlayingMoviesCubit = NowPlayingMoviesCubit(
-      movieRepository: MovieRepository(apiKey: 'YOUR_API_KEY'));
+  NowPlayingMoviesCubit nowPlayingMoviesCubit =
+      NowPlayingMoviesCubit(movieRepository: MovieRepository(apiKey: apiKey));
+  
   WatchlistCubit watchlistCubit = WatchlistCubit(
       watchlistRepository: WatchlistRepository(
-          apiKey: apiKey, sharedPrefService: SharedPrefService()));
+          apiKey: apiKey, 
+          sharedPrefService:SharedPrefService(
+            
+           )));
 
   MyApp({super.key}
 
@@ -58,9 +83,13 @@ class MyApp extends StatelessWidget {
               create: (_) => nowPlayingMoviesCubit),
           BlocProvider<WatchlistCubit>(create: (_) => watchlistCubit),
         ],
-        child: const MaterialApp(title: 'Movie App', home: HomeScreen()
+        child:  MaterialApp(title: 'Movie App', 
+        home: LoginScreen()
+        //HomeScreen()
             // BlocBuilder<AuthCubit, AuthState>(
             //   builder: (context, state) {
+            //     print(state);
+
             //     if (state is AuthAuthenticated) {
             //       return HomeScreen();
             //     } else if (state is AuthUnauthenticated) {

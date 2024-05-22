@@ -7,6 +7,8 @@ import 'package:movie_app/features/home_feature/presention/screens/home.dart';
 import 'package:movie_app/features/now.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -26,15 +28,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _skipLogin() {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) =>
-       HomeScreen()),
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
     );
   }
 
   void _navigateToSignUp() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) =>
-       SignUpScreen()),
+      MaterialPageRoute(builder: (context) => SignUpScreen()),
     );
   }
 
@@ -42,15 +42,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
       ),
-      body: BlocListener<AuthCubit, 
-      AuthState>(
+      body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => 
-              HomeScreen()),
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
           } else if (state is AuthError) {
             setState(() {
@@ -58,44 +56,45 @@ class _LoginScreenState extends State<LoginScreen> {
             });
           }
         },
-        child:Center(
-          child: 
-         Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              TextField(
-                controller: usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
-              ),
-              TextField(
-                controller: passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
-                obscureText: true,
-              ),
-              SizedBox(height: 20),
-              if (isLoading) CircularProgressIndicator(),
-              if (errorMessage != null) Text(errorMessage!, style: TextStyle(color: Colors.red)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: _login,
-                    child: Text('Login'),
-                  ),
-                  ElevatedButton(
-                    onPressed: _skipLogin,
-                    child: Text('Skip'),
-                  ),
-                  ElevatedButton(
-                    onPressed: _navigateToSignUp,
-                    child: Text('Sign Up'),
-                  ),
-                ],
-              ),
-            ],
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                TextField(
+                  controller: usernameController,
+                  decoration: const InputDecoration(labelText: 'Username'),
+                ),
+                TextField(
+                  controller: passwordController,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 20),
+                if (isLoading) const CircularProgressIndicator(),
+                if (errorMessage != null)
+                  Text(errorMessage!,
+                      style: const TextStyle(color: Colors.red)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _login,
+                      child: const Text('Login'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _skipLogin,
+                      child: const Text('Skip'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _navigateToSignUp,
+                      child: const Text('Sign Up'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
         ),
       ),
     );

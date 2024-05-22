@@ -19,7 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     // Fetch now playing movies on initialization
-    context.read<NowPlayingMoviesCubit>().fetchNowPlayingMovies();
+    context.read<NowPlayingMoviesCubit>().
+    fetchNowPlayingMovies();
   }
 
   @override
@@ -45,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: _buildDrawer(context),
       body: BlocBuilder<NowPlayingMoviesCubit, NowPlayingMoviesState>(
         builder: (context, state) {
+          print(state);
           if (state is NowPlayingMoviesLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is NowPlayingMoviesLoaded) {
@@ -73,8 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDrawer(BuildContext context) {
     final authCubit = context.read<AuthCubit>();
-    final user =
-     authCubit.tmdbAuth?.currentUser;
+    final user = authCubit.tmdbAuth?.currentUser;
 
     return Drawer(
       child: ListView(

@@ -3,6 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class SharedPrefService {
+  //final SharedPreferences sharedpref;
+
+  SharedPrefService(  
+    //{required this.sharedpref}
+    );
   Future<void> saveSessionId(String sessionId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('session_id', sessionId);
@@ -20,8 +25,7 @@ class SharedPrefService {
 
   Future<void> saveUser(User user) async {
     final prefs = await SharedPreferences.getInstance();
-    final userJson = 
-    json.encode(user.toJson());
+    final userJson = json.encode(user.toJson());
     await prefs.setString('user', userJson);
   }
 

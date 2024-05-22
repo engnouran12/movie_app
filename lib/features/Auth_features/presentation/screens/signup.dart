@@ -92,6 +92,8 @@ import 'package:movie_app/features/home_feature/presention/screens/home.dart';
 import 'package:movie_app/features/now.dart';
 
 class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -106,21 +108,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final username = usernameController.text;
     final password = passwordController.text;
 
-    context.read<AuthCubit>().login(username, password); // Replace this with actual sign-up logic
+    context
+        .read<AuthCubit>()
+        .login(username, password); // Replace this with actual sign-up logic
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign Up'),
+        title: const Text('Sign Up'),
       ),
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => 
-              HomeScreen()),
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
           } else if (state is AuthError) {
             setState(() {
@@ -129,24 +132,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
           }
         },
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               TextField(
                 controller: usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
+                decoration: const InputDecoration(labelText: 'Username'),
               ),
               TextField(
                 controller: passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
               ),
-              SizedBox(height: 20),
-              if (isLoading) CircularProgressIndicator(),
-              if (errorMessage != null) Text(errorMessage!, style: TextStyle(color: Colors.red)),
+              const SizedBox(height: 20),
+              if (isLoading) const CircularProgressIndicator(),
+              if (errorMessage != null)
+                Text(errorMessage!, style: const TextStyle(color: Colors.red)),
               ElevatedButton(
                 onPressed: _signUp,
-                child: Text('Sign Up'),
+                child: const Text('Sign Up'),
               ),
             ],
           ),
