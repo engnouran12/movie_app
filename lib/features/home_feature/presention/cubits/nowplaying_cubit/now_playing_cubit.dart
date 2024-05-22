@@ -18,7 +18,7 @@ class NowPlayingMoviesCubit extends Cubit<NowPlayingMoviesState> {
     try {
       if (state is NowPlayingMoviesLoading) return;
 
-      emit(NowPlayingMoviesLoading());
+      emit(NowPlayingMoviesLoading(previousMovies: [], isFirstFetch: true));
       final newMovies = await movieRepository.getNowPlayingMovies(currentPage);
       if (newMovies.isEmpty) {
         emit(NowPlayingMoviesLoaded(
@@ -31,7 +31,7 @@ class NowPlayingMoviesCubit extends Cubit<NowPlayingMoviesState> {
         hasReachedEnd: false));
       }
     } catch (e) {
-      emit(NowPlayingMoviesError(message: e.toString()));
+      emit(NowPlayingMoviesError(message: e.toString(), previousMovies: []));
     }
   }
 }

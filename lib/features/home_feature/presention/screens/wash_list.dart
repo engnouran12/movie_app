@@ -18,8 +18,6 @@ class WishlistScreen extends StatelessWidget {
       ),
       body: BlocBuilder<WatchlistCubit, WatchlistState>(
         builder: (context, state) {
-          print(state);
-
           if (state is WatchlistLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is WatchlistLoaded) {
@@ -30,8 +28,7 @@ class WishlistScreen extends StatelessWidget {
                 return MovieListItem(
                   movie: movie,
                   onRemoveFromWatchlist: () {
-                    watchlistCubit.addToWatchlist(
-                      movie.id.toString(), false);
+                    watchlistCubit.removeFromWatchlist(movie.id.toString());
                   },
                 );
               },

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:movie_app/features/Auth_features/presentation/cubit/auth_cubit.dart';
 import 'package:movie_app/features/home_feature/presention/cubits/nowplaying_cubit/now_playing_cubit.dart';
 import 'package:movie_app/features/home_feature/presention/cubits/nowplaying_cubit/now_playing_state.dart';
-import 'package:movie_app/features/home_feature/presention/cubits/watchlist_cubit/watch_list_cubit.dart';
 import 'package:movie_app/features/home_feature/presention/screens/wash_list.dart';
 import 'package:movie_app/features/home_feature/presention/widgets/movie_item.dart';
+import 'package:movie_app/features/home_feature/presention/cubits/watchlist_cubit/watch_list_cubit.dart';
+import 'package:movie_app/features/Auth_features/presentation/cubit/auth_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,11 +15,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
-    // Fetch now playing movies on initialization
-    context.read<NowPlayingMoviesCubit>().fetchNowPlayingMovies();
+    final nowPlayingMoviesCubit = context.read<NowPlayingMoviesCubit>();
+    nowPlayingMoviesCubit.fetchNowPlayingMovies();
+
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      context.read<NowPlayingMoviesCubit>().fetchNowPlayingMovies();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -45,19 +62,40 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: _buildDrawer(context),
       body: BlocBuilder<NowPlayingMoviesCubit, NowPlayingMoviesState>(
         builder: (context, state) {
-          print(state);
-          if (state is NowPlayingMoviesLoading) {
+          if (state is NowPlayingMoviesLoading && state.isFirstFetch) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is NowPlayingMoviesLoaded) {
             return ListView.builder(
-              itemCount: state.movies.length,
+              controller: _scrollController,
+              itemCount: state.hasReachedEnd ? state.movies.length : state.movies.length + 1,
               itemBuilder: (context, index) {
+                if (index >= state.movies.length) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final movie = state.movies[index];
                 return MovieListItem(
-                  movie: state.movies[index],
+                  movie: movie,
                   onAddToWatchlist: () {
                     final watchlistCubit = context.read<WatchlistCubit>();
-                    watchlistCubit.addToWatchlist(
-                        state.movies[index].id.toString(), true);
+                    watchlistCubit.addToWatchlist(movie.id.toString(), true);
+                  },
+                );
+              },
+            );
+          } else if (state is NowPlayingMoviesLoading) {
+            return ListView.builder(
+              controller: _scrollController,
+              itemCount: state.previousMovies.length + 1,
+              itemBuilder: (context, index) {
+                if (index >= state.previousMovies.length) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final movie = state.previousMovies[index];
+                return MovieListItem(
+                  movie: movie,
+                  onAddToWatchlist: () {
+                    final watchlistCubit = context.read<WatchlistCubit>();
+                    watchlistCubit.addToWatchlist(movie.id.toString(), true);
                   },
                 );
               },
@@ -84,8 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
             accountName: Text(user?.name ?? 'Guest'),
             accountEmail: const Text(''),
             currentAccountPicture: CircleAvatar(
-              backgroundImage: 
-              NetworkImage(user?.profilePath ?? ''),
+              backgroundImage: NetworkImage(user?.profilePath ?? ''),
             ),
           ),
           ListTile(
@@ -93,8 +130,9 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('Wishlist'),
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => 
-                const WishlistScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const WishlistScreen(),
+                ),
               );
             },
           ),
