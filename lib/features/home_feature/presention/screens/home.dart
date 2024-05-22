@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_app/features/home_feature/presention/cubits/nowplaying_cubit/now_playing_cubit.dart';
 import 'package:movie_app/features/home_feature/presention/cubits/nowplaying_cubit/now_playing_state.dart';
-import 'package:movie_app/features/home_feature/presention/screens/wash_list.dart';
-import 'package:movie_app/features/home_feature/presention/widgets/movie_item.dart';
-import 'package:movie_app/features/home_feature/presention/cubits/watchlist_cubit/watch_list_cubit.dart';
-import 'package:movie_app/features/Auth_features/presentation/cubit/auth_cubit.dart';
+import 'package:movie_app/features/home_feature/presention/widgets/movie_list.dart';
+import 'package:movie_app/features/home_feature/presention/widgets/custom_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -59,84 +57,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      drawer: _buildDrawer(context),
+      drawer: const CustomDrawer(),
       body: BlocBuilder<NowPlayingMoviesCubit, NowPlayingMoviesState>(
         builder: (context, state) {
-          if (state is NowPlayingMoviesLoading && state.isFirstFetch) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is NowPlayingMoviesLoaded) {
-            return ListView.builder(
-              controller: _scrollController,
-              itemCount: state.hasReachedEnd ? state.movies.length : state.movies.length + 1,
-              itemBuilder: (context, index) {
-                if (index >= state.movies.length) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final movie = state.movies[index];
-                return MovieListItem(
-                  movie: movie,
-                  onAddToWatchlist: () {
-                    final watchlistCubit = context.read<WatchlistCubit>();
-                    watchlistCubit.addToWatchlist(movie.id.toString(), true);
-                  },
-                );
-              },
-            );
-          } else if (state is NowPlayingMoviesLoading) {
-            return ListView.builder(
-              controller: _scrollController,
-              itemCount: state.previousMovies.length + 1,
-              itemBuilder: (context, index) {
-                if (index >= state.previousMovies.length) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final movie = state.previousMovies[index];
-                return MovieListItem(
-                  movie: movie,
-                  onAddToWatchlist: () {
-                    final watchlistCubit = context.read<WatchlistCubit>();
-                    watchlistCubit.addToWatchlist(movie.id.toString(), true);
-                  },
-                );
-              },
-            );
-          } else if (state is NowPlayingMoviesError) {
-            return Center(child: Text(state.message));
-          } else {
-            return const Center(child: Text('Failed to load movies'));
-          }
+          return MovieList(
+            scrollController: _scrollController,
+            state: state,
+          );
         },
-      ),
-    );
-  }
-
-  Widget _buildDrawer(BuildContext context) {
-    final authCubit = context.read<AuthCubit>();
-    final user = authCubit.tmdbAuth.currentUser;
-
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          UserAccountsDrawerHeader(
-            accountName: Text(user?.name ?? 'Guest'),
-            accountEmail: const Text(''),
-            currentAccountPicture: CircleAvatar(
-              backgroundImage: NetworkImage(user?.profilePath ?? ''),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.list),
-            title: const Text('Wishlist'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const WishlistScreen(),
-                ),
-              );
-            },
-          ),
-        ],
       ),
     );
   }
