@@ -4,7 +4,6 @@ import 'package:movie_app/features/Auth_features/presentation/cubit/auth_cubit.d
 import 'package:movie_app/features/Auth_features/presentation/cubit/auth_state.dart';
 import 'package:movie_app/features/Auth_features/presentation/screens/signup.dart';
 import 'package:movie_app/features/home_feature/presention/screens/home.dart';
-import 'package:movie_app/features/now.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,16 +13,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
   String? errorMessage;
 
   void _login() {
-    final username = usernameController.text;
-    final password = passwordController.text;
+    if (_formKey.currentState?.validate() ?? false) {
+      final username = usernameController.text;
+      final password = passwordController.text;
 
-    context.read<AuthCubit>().login(username, password);
+      context.read<AuthCubit>().login(username, password);
+    }
   }
 
   void _skipLogin() {
@@ -34,8 +36,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _navigateToSignUp() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => SignUpScreen()),
+      MaterialPageRoute(builder: (context) => const SignUpScreen()),
     );
+  }
+
+  String? _validateUsername(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Username is required';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password is required';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters long';
+    }
+    return null;
   }
 
   @override
@@ -46,6 +65,17 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
+          if (state is AuthLoading) {
+            setState(() {
+              isLoading = true;
+              errorMessage = null;
+            });
+          } else {
+            setState(() {
+              isLoading = false;
+            });
+          }
+
           if (state is AuthAuthenticated) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -59,40 +89,49 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                TextField(
-                  controller: usernameController,
-                  decoration: const InputDecoration(labelText: 'Username'),
-                ),
-                TextField(
-                  controller: passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                ),
-                const SizedBox(height: 20),
-                if (isLoading) const CircularProgressIndicator(),
-                if (errorMessage != null)
-                  Text(errorMessage!,
-                      style: const TextStyle(color: Colors.red)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: _login,
-                      child: const Text('Login'),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextFormField(
+                    controller: usernameController,
+                    decoration: const InputDecoration(labelText: 'Username'),
+                    validator: _validateUsername,
+                  ),
+                  TextFormField(
+                    controller: passwordController,
+                    decoration: const InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                    validator: _validatePassword,
+                  ),
+                  const SizedBox(height: 20),
+                  if (isLoading) const CircularProgressIndicator(),
+                  if (errorMessage != null)
+                    Text(
+                      errorMessage!,
+                      style: const TextStyle(color: Colors.red),
                     ),
-                    ElevatedButton(
-                      onPressed: _skipLogin,
-                      child: const Text('Skip'),
-                    ),
-                    ElevatedButton(
-                      onPressed: _navigateToSignUp,
-                      child: const Text('Sign Up'),
-                    ),
-                  ],
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _login,
+                        child: const Text('Login'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _skipLogin,
+                        child: const Text('Skip'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _navigateToSignUp,
+                        child: const Text('Sign Up'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
