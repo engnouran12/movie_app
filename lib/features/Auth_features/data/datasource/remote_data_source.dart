@@ -19,7 +19,7 @@ class TMDBAuth {
     required this.sharedPrefService}
   );
 
- //sign up
+ //log in 3 steps
   Future<void> getRequestToken() async {
     final url = Uri.parse(
       '$baseUrl/authentication/token/new?api_key=$apiKey'
@@ -84,7 +84,7 @@ class TMDBAuth {
 
   Future<void> _fetchUserDetails() async {
     final url = Uri.parse(
-      '$base64Url/account?api_key=$apiKey&session_id=$sessionId');
+      '$baseUrl/account?api_key=$apiKey&session_id=$sessionId');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

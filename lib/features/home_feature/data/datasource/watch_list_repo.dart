@@ -29,13 +29,43 @@ class WatchlistRepository {
       body: json.encode({
         'media_type': 'movie',
         'media_id': movieId,
-        'watchlist': add,
+        'watchlist': true,
       }),
     );
-    if (response.statusCode != 200) {
+    if (response.statusCode != 201) {
       throw Exception('Failed to update watchlist');
     }
   }
+
+Future<void> removeToWatchlist(String movieId, bool add) async {
+    final String? sessionId = await sharedPrefService!.getSessionId();
+    final String? accountId = (await sharedPrefService!.getUser())?.id.toString();
+
+    if (sessionId == null || accountId == null) {
+      throw Exception('Session ID or Account ID not found');
+    }
+
+    final url =
+        'https://api.themoviedb.org/3/account/$accountId/watchlist?api_key=$apiKey&session_id=$sessionId';
+    final response = await http.post(
+      Uri.parse(url),
+      body: json.encode({
+        'media_type': 'movie',
+        'media_id': movieId,
+        'watchlist': false,
+      }),
+    );
+    if (response.statusCode != 201) {
+      throw Exception('Failed to update watchlist');
+    }
+  }
+
+
+
+
+
+
+
 
   Future<List<Movie>> getWatchlist() async {
     final String? sessionId = await sharedPrefService!.getSessionId();
@@ -56,4 +86,7 @@ class WatchlistRepository {
       throw Exception('Failed to load watchlist');
     }
   }
+
+
+
 }

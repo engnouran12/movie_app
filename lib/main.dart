@@ -14,15 +14,14 @@ import 'package:movie_app/features/home_feature/presention/screens/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
- // final sharedPreferences = await SharedPreferences.getInstance();
-    // final sharedPrefService =
-    //  SharedPrefService
-    //  (sharedpref: sharedPreferences
-    //   );
+  // final sharedPreferences = await SharedPreferences.getInstance();
+  // final sharedPrefService =
+  //  SharedPrefService
+  //  (sharedpref: sharedPreferences
+  //   );
 
-  
   //final sharedPrefService = SharedPrefService().saveSessionId(sessionId);
- 
+
   await MovieRepository(apiKey: apiKey).getNowPlayingMovies(1);
   //final sharedPrefService = SharedPrefService();
   // final tmdbAuth = TMDBAuth(
@@ -48,24 +47,23 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   TMDBAuth tmdbAuth = TMDBAuth(
-       apiKey: apiKey,
-        
-   sessionId: '', sharedPrefService: SharedPrefService(),
-    currentUser: null);
-  AuthCubit authCubit = AuthCubit(tmdbAuth: TMDBAuth(
-       apiKey: apiKey,
-        
-   sessionId: '', sharedPrefService: SharedPrefService(), currentUser: null));
+      apiKey: apiKey,
+      sessionId: '',
+      sharedPrefService: SharedPrefService(),
+      currentUser: null);
+  AuthCubit authCubit = AuthCubit(
+      tmdbAuth: TMDBAuth(
+          apiKey: apiKey,
+          sessionId: '',
+          sharedPrefService: SharedPrefService(),
+          currentUser: null));
   //TMDBAuth(apiKey: apiKey, sharedPrefService: sharedPrefService, sessionId: '');;
   NowPlayingMoviesCubit nowPlayingMoviesCubit =
       NowPlayingMoviesCubit(movieRepository: MovieRepository(apiKey: apiKey));
-  
+
   WatchlistCubit watchlistCubit = WatchlistCubit(
       watchlistRepository: WatchlistRepository(
-          apiKey: apiKey, 
-          sharedPrefService:SharedPrefService(
-            
-           )));
+          apiKey: apiKey, sharedPrefService: SharedPrefService()));
 
   MyApp({super.key}
 
@@ -83,9 +81,11 @@ class MyApp extends StatelessWidget {
               create: (_) => nowPlayingMoviesCubit),
           BlocProvider<WatchlistCubit>(create: (_) => watchlistCubit),
         ],
-        child:  MaterialApp(title: 'Movie App', 
-        home: LoginScreen()
-        //HomeScreen()
+        child: const MaterialApp(
+            title: 'Movie App',
+            debugShowCheckedModeBanner: false,
+            home: LoginScreen()
+            //HomeScreen()
             // BlocBuilder<AuthCubit, AuthState>(
             //   builder: (context, state) {
             //     print(state);

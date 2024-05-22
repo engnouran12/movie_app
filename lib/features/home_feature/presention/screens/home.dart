@@ -19,8 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     // Fetch now playing movies on initialization
-    context.read<NowPlayingMoviesCubit>().
-    fetchNowPlayingMovies();
+    context.read<NowPlayingMoviesCubit>().fetchNowPlayingMovies();
   }
 
   @override
@@ -75,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDrawer(BuildContext context) {
     final authCubit = context.read<AuthCubit>();
-    final user = authCubit.tmdbAuth?.currentUser;
+    final user = authCubit.tmdbAuth.currentUser;
 
     return Drawer(
       child: ListView(
@@ -83,9 +82,10 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(user?.name ?? 'Guest'),
-            accountEmail: Text(user?.email ?? ''),
+            accountEmail: const Text(''),
             currentAccountPicture: CircleAvatar(
-              backgroundImage: NetworkImage(user?.profilePath ?? ''),
+              backgroundImage: 
+              NetworkImage(user?.profilePath ?? ''),
             ),
           ),
           ListTile(
@@ -93,7 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text('Wishlist'),
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => WishlistScreen()),
+                MaterialPageRoute(builder: (context) => 
+                const WishlistScreen()),
               );
             },
           ),

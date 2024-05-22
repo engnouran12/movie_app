@@ -30,7 +30,8 @@ class WishlistScreen extends StatelessWidget {
                 return MovieListItem(
                   movie: movie,
                   onRemoveFromWatchlist: () {
-                    watchlistCubit.addToWatchlist(movie.id.toString(), false);
+                    watchlistCubit.addToWatchlist(
+                      movie.id.toString(), false);
                   },
                 );
               },
