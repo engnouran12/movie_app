@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_app/features/Auth_features/presentation/cubit/auth_cubit.dart';
 import 'package:movie_app/features/Auth_features/presentation/cubit/auth_state.dart';
-import 'package:movie_app/features/Auth_features/presentation/screens/signup.dart';
 import 'package:movie_app/features/home_feature/presention/screens/home.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -34,11 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _navigateToSignUp() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const SignUpScreen()),
-    );
-  }
+  
 
   String? _validateUsername(String? value) {
     if (value == null || value.isEmpty) {
@@ -102,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextFormField(
                     controller: passwordController,
                     decoration: const InputDecoration(labelText: 'Password'),
+                    
                     obscureText: true,
                     validator: _validatePassword,
                   ),
@@ -124,10 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: _skipLogin,
                         child: const Text('Skip'),
                       ),
-                      ElevatedButton(
-                        onPressed: _navigateToSignUp,
-                        child: const Text('Sign Up'),
-                      ),
+                    
                     ],
                   ),
                 ],

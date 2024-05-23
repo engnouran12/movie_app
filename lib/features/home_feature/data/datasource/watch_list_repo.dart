@@ -38,8 +38,8 @@ class WatchlistRepository {
   }
 
 Future<void> removeToWatchlist(String movieId, bool add) async {
-    final String? sessionId = await sharedPrefService!.getSessionId();
-    final String? accountId = (await sharedPrefService!.getUser())?.id.toString();
+    final String? sessionId = await sharedPrefService.getSessionId();
+    final String? accountId = (await sharedPrefService.getUser())?.id.toString();
 
     if (sessionId == null || accountId == null) {
       throw Exception('Session ID or Account ID not found');
@@ -56,7 +56,7 @@ Future<void> removeToWatchlist(String movieId, bool add) async {
       }),
     );
     if (response.statusCode != 201) {
-      throw Exception('Failed to update watchlist');
+      throw Exception('Server Failed to update watchlist');
     }
   }
 

@@ -1,0 +1,15 @@
+class SearchlistRepository {
+  // ...
+
+ Static Future<List<Movie>> searchNowPlayingMovies(String query) async {
+    final String url = '$baseUrl/search/movie?api_key=$apiKey&query=$query';
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> moviesJson = jsonResponse['results'];
+      return moviesJson.map((json) => Movie.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to search now playing movies');
+    }
+  }
+}
