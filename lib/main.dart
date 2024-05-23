@@ -14,33 +14,11 @@ import 'package:movie_app/features/home_feature/presention/screens/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  // final sharedPreferences = await SharedPreferences.getInstance();
-  // final sharedPrefService =
-  //  SharedPrefService
-  //  (sharedpref: sharedPreferences
-  //   );
-
-  //final sharedPrefService = SharedPrefService().saveSessionId(sessionId);
-
-  await MovieRepository(apiKey: apiKey).getNowPlayingMovies(1);
-  //final sharedPrefService = SharedPrefService();
-  // final tmdbAuth = TMDBAuth(
-  //     apiKey: apiKey, sharedPrefService:
-  // sharedPrefService,
-  // sessionId: '');
-  // final watchlistRepository =
-  //     WatchlistRepository(apiKey: apiKey, sharedPrefService: sharedPrefService);
-  // final movieRepository = MovieRepository(apiKey: 'YOUR_API_KEY');
+  
 
   runApp(
     MyApp(
-        // authCubit: AuthCubit(tmdbAuth: tmdbAuth),
-        // nowPlayingMoviesCubit:
-        //     NowPlayingMoviesCubit(movieRepository: movieRepository),
-        // watchlistCubit:
-        // WatchlistCubit(
-        //   watchlistRepository: watchlistRepository
-        //watchlistRepository: watchlistRepository
+      
         ),
   );
 }
@@ -57,7 +35,7 @@ class MyApp extends StatelessWidget {
           sessionId: '',
           sharedPrefService: SharedPrefService(),
           currentUser: null));
-  //TMDBAuth(apiKey: apiKey, sharedPrefService: sharedPrefService, sessionId: '');;
+ 
   NowPlayingMoviesCubit nowPlayingMoviesCubit =
       NowPlayingMoviesCubit(movieRepository: MovieRepository(apiKey: apiKey));
 
@@ -67,9 +45,7 @@ class MyApp extends StatelessWidget {
 
   MyApp({super.key}
 
-      // required this.authCubit,
-      // required this.nowPlayingMoviesCubit,
-      // required this.watchlistCubit,
+    
       );
 
   @override
