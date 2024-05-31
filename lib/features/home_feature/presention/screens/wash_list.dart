@@ -5,12 +5,11 @@ import 'package:movie_app/features/home_feature/presention/cubits/watchlist_cubi
 import 'package:movie_app/features/home_feature/presention/widgets/movie_item.dart';
 
 class WishlistScreen extends StatelessWidget {
-  const WishlistScreen({super.key});
+  const WishlistScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final watchlistCubit = context.read<WatchlistCubit>();
-    watchlistCubit.fetchWatchlist();
 
     return Scaffold(
       appBar: AppBar(
@@ -18,6 +17,11 @@ class WishlistScreen extends StatelessWidget {
       ),
       body: BlocBuilder<WatchlistCubit, WatchlistState>(
         builder: (context, state) {
+          print(state);
+          // Avoid unnecessary fetching on every build
+          if (state is WatchlistInitial) {
+            watchlistCubit.fetchWatchlist();
+          }
           if (state is WatchlistLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is WatchlistLoaded) {
